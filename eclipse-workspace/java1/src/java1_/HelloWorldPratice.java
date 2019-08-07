@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class HelloWorldPratice extends TestBase{
 
-	static WebDriver driver;
+public class HelloWorldPratice extends TestBase{
 
 	public static void main(String[] args) throws IOException, InterruptedException  {
 		// TODO Auto-generated method stub
@@ -22,6 +20,8 @@ public class HelloWorldPratice extends TestBase{
 		obj.load(reader);		
 
 		HelloWorldPratice.openbrowser1();
+		HelloWorldPratice.globalwait();		
+
 
 		// open URL
 		driver.get(obj.getProperty("appUrl"));
@@ -34,21 +34,28 @@ public class HelloWorldPratice extends TestBase{
 		// click on help button and handle the alert
 		List<WebElement> clickonhelp = driver.findElements(By.linkText("Help"));
 		int a2 = clickonhelp.size();
-		System.out.println(a2);
+		//System.out.println(a2);
 		for(int i=0;i<a2;i++) {
 			clickonhelp.get(i).click();
-			Thread.sleep(1200);
+			Thread.sleep(200);
 			driver.switchTo().alert().accept();
 		}
-		// create username & password
-		driver.findElement(By.name("username")).sendKeys(obj.getProperty("username"));
-		driver.findElement(By.xpath("//input[@tabindex='2']")).sendKeys(obj.getProperty("password"));
-		driver.findElement(By.xpath("//input[@type='button']")).click();
 
+		HelloWorldPratice.readexcel();
+
+		String excelrow = obj.getProperty("row");
+		int c = Integer.parseInt(excelrow);
+
+		for(int i=1;i<=c;i++) {
+			// create username & password
+			driver.findElement(By.name("username")).sendKeys(sheet.getRow(i).getCell(0).getStringCellValue());
+			driver.findElement(By.xpath("//input[@tabindex='2']")).sendKeys(sheet.getRow(i).getCell(1).getStringCellValue());
+			driver.findElement(By.xpath("//input[@type='button']")).click();
+		}
 		// login 
 		driver.findElement(By.linkText("4. Login")).click();
-		driver.findElement(By.name("username")).sendKeys(obj.getProperty("username"));
-		driver.findElement(By.xpath("//input[@tabindex='2']")).sendKeys(obj.getProperty("password"));
+		driver.findElement(By.name("username")).sendKeys(sheet.getRow(1).getCell(0).getStringCellValue());
+		driver.findElement(By.xpath("//input[@tabindex='2']")).sendKeys(sheet.getRow(1).getCell(1).getStringCellValue());
 		driver.findElement(By.xpath("//input[@type='button']")).click();
 
 		// find how many links are available on page and print them
@@ -58,9 +65,5 @@ public class HelloWorldPratice extends TestBase{
 		for(int i=0;i<a1;i++) {
 			System.out.println(nooflink.get(i).getText());
 		}
-
-
-
 	}
-
 }
